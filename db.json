@@ -1,0 +1,94 @@
+{
+  "lesson": [
+    {
+      "topic": "App.JS",
+      "content": "App start - const [item, useItem] = useState('default') the default can be your data so you can start building features.  If you want to build a list type item like this app.  You would need to start building components such as ItemForm, ItemList, ItemItem, so you can start outputting your information to the DOM.  You will then get your objects to render through passing ID and properties.  for example, in ItemList you use item.map(iterableITEM) => to iterate through your items in your mock database from the useState.  You can directly access the properties by using this item object for things such as item.id, item.content or whatever you name.  This is then passed into a div and passed to your app.JS for rendering.",
+      "reflect": "Greater understanding of how to control items through use of function.  How to get the state to appear on screen, and how to pass props.  Still need improvement on props.",
+      "id": 1
+    },
+    {
+      "topic": "ItemList and Map",
+      "content": "for this app I used \n{lesson.map((item) =>  \n           <LessonItem \n            key={item.id} \n            item={item}\n\nAll items must have a unique key to iterate properly.  This map function allows us to iterate each item and pass in the properties of the item object as it creates the list.  This text is an example of this item object being created",
+      "reflect": "Multiple tries to get the map function working properly.  Map always iterates an item and can easily have it's index accessed for example\n\nlesson.map(item, index) => now index is ready to access",
+      "id": 3
+    },
+    {
+      "topic": "Ternary Operators",
+      "content": "example from project \nsetLesson(\n      lesson.map((item) => (item.id === id ? { ...item, ...data } : item))\n    );\n(if statement is true ? {return truth : else return this for false)\n\nIn this example we are settng the state by passing the ternary operater as an argument for the state.  useState in this example is taking in the a spread operator to iterate through the items in lesson, and using data from a PUT response to run updItem argument as data and complete the edit. ",
+      "reflect": "Easier to read than write.  I definitely could use some work in writing state and ternary operators to improve the quality of my code.  ",
+      "id": 4
+    },
+    {
+      "topic": "setLessonEdit",
+      "content": "Caught a bug where setLessonEdit was not inputting properly after update, and you weren't able to write a new post.  ",
+      "reflect": "Nice bug catch!",
+      "id": 6
+    },
+    {
+      "topic": "Create Context",
+      "content": "const LessonContext = createContext()\nThis is placed above export funcrion LessonProvider({children})\nChildren is to render everything below the provider in the app tree.  To write this to the DOM you create LessonContext.Provider and then add values which can be state or functions.  These state or functions are then passed to components through useContext, where you can then access any of the values in any of the children of LessonContext.Provider\n\nit looks like lessonContext.Provider>{children}<LessonContext.Provider/>",
+      "reflect": " Lots of room for improvement here.",
+      "id": 7
+    },
+    {
+      "topic": "Fetch array",
+      "content": "const fetchLesson = async () => {\n \n    // http:// portion added from proxy in package.json\n    const response = await fetch('/lesson?_sort=id&_order=desc');\n    // convert data to JSON\n    const data = await response.json();\n\n    //set State with results of fetchData\n    setLesson(data)\n    setIsLoading(false)\n\nthis gets attached to useEffect.  This is how you load the data array onto the page the first time.  useEffect calls fetchLesson with , [empty dependency].  With this dependency empty, it will only call the data on initial load, or else if you put something here it will call each reload.  \n\nYou get fetch by calling async, then await the desired http you are wanting to call.  Convert data to json using const data = await response.json() then set your state to the data you want to display",
+      "reflect": "useEffect is best used for now when the web page is first loading, but later on you may want to use for any reloadable portions.  Will probably need more examples. ",
+      "id": 8
+    },
+    {
+      "topic": "Editing State ",
+      "content": "const [lessonEdit, setLessonEdit] = useState({\n    // take in an object we are editing - give this an empty item\n    // this will pull the target edit event into this object\n    item: {},\n    //edit will be set to false if we click edit will be set to true\n    edit: false,\n  });\n\nthe state in this instance, is an object, and the setLessonEdit inserts the object into our form and we need to setLessonEdit to true to modify the item.  When editLesson is called it takes in the given item, and the state is modified.  When set to false, it goes back to an empty item.  ",
+      "reflect": "still a bit confusing here, will need to try to rework this later and modify as necessary",
+      "id": 9
+    },
+    {
+      "topic": "deleteItem",
+      "content": " const deleteLesson = async (id) => {\n    //add id object and an object with method: DELETE\n    if(window.confirm('Delete permanently?')) {\n    await fetch(`/lesson/${id}`, { method: 'DELETE'})\n    //filter out item by making new array w/o item and giving it to setLesson\n    setLesson(lesson.filter((item) => item.id !== id));\n  }};\n\nThis takes in an ID argument, then is fetched based on that idea.  fetch takes in 2 arguments, the DATA and the METHOD, this method being delete. \n\nFilter is called on setLesson to create a new array with our target ID filtered out of that array.  That array is then passed off to setLesson with our target item removed. ",
+      "reflect": "This will likely be reproduced over many systems.  Probably would have nice reusability with adding a todo list or any other list functionality.",
+      "id": 10
+    },
+    {
+      "topic": "updateItem",
+      "content": "const updateLesson = async (id, updItem) => {\n    const response = await fetch(`/lesson/${id}`, {\n        method: 'PUT',\n        headers: {\n            'Content-Type': 'application/json',\n    },\n        body: JSON.stringify(updItem)\n    })\n    \n    const data = await response.json()\n\n    setLesson(\n      lesson.map((item) => (item.id === id ? { ...item, ...data } : item))\n    );\n    setLessonEdit(false)\n\nin this example, updateLesson takes in 2 arguments of the id, and updItem from our form.  We use respone = await fetch to grab the item by the ID.  The tricky part is that setLesson takes in 1 or 2 arguments based on the ternary operator.  The ternary operator either passes setLesson(...item, ...data) or setLesson(...item) This happens by the invisble return statement of the ternary operator to supply our setLesson with arguments.                       ",
+      "reflect": "I will need to reference this later to write this type of item.  ",
+      "id": 11
+    },
+    {
+      "topic": "onClick Functionality ",
+      "content": "onClick={(event) => deleteLesson(item.id)\nonClick={(event) => editLesson(item)\n\n2 examples of onClick events written in the jsx terms.  the onclick triggers the event to pass our item.id to our function delete and pass our item item to our editLesson.  \n\nThe item is prop drilled here from lesson list where the unique key(id) and item from our useState is iterated out using the map function.  From there, we use context to pass our edit and deleteLesson functions using:\n const { editLesson, deleteLesson } = useContext(LessonContext)\n \nto give us action to these functions . ",
+      "reflect": "I understand the fundamentals of what is happening here, but need more time just writing the code that makes this happen. ",
+      "id": 12
+    },
+    {
+      "topic": "LessonForm ",
+      "content": "Lots of complexity happening in our form.  \nWe start out with creating the state that controls each of these boxes, the button that allows submit, and a useState message if the parameters we write for our form are not met.  \n\nconst handleTopicText = (event) => {\n    setTopic(event.target.value);\n  };\n\nwe create these eventHandlers to allow the information to be passed into the form with onChange.  We then pass the value={topic} to pass our data to the handleSubmit.  We do this by passing our state in these boxes to a variable.  In this example the variable is newLesson object where because topic key and value are the same you can write it as topic, rather than topic: 'topic' to add the data to the variable object.  \nconst newLesson = {\n        topic,\n        content,\n        reflect,\n      };\n\nthis data is then returned to our addlesson that we get to our form by using our const { addLesson } = useContext(LessonContext), then rendered through our async fetch.  ",
+      "reflect": "Lots of complexity going on here.  I just need to continue breaking this stuff down into smaller steps and attempting to write independently. ",
+      "id": 13
+    },
+    {
+      "topic": "useEffect via FORM",
+      "content": " useEffect(() => {\n    // check to make sure we should run useEffect first\n    if(lessonEdit.edit === true) {\n    setBtnDisabled(false)\n    setTopic(lessonEdit.item.topic)\n    setContent(lessonEdit.item.content)\n    setReflect(lessonEdit.item.reflect)\n    }\n    },\n    //with an empty array it only loads when the web page loads\n    // lesson edit runs whenever yo click on edit \n    [lessonEdit])\n\nif setBtnDisable is false, it allows us to inject our target item to our lessonEdit.  We can then reference this by using the lessonEdit.item.topic to reference topic and we use the state within the useEffect to push it back to the form for editing.",
+      "reflect": "use case for useEffect to render a target item back to the form for editing.  Possibly the most complex item from this program.  Will continue to work on these topics.  ",
+      "id": 14
+    },
+    {
+      "topic": "shared Folder with Button, Component ",
+      "content": "this can be used all across the app.  Very simple functionality that allows us to put these in any area requiring a card or a button.  We just pass a chlidren prop to the card and button to let it know to output any info wrapped in the card or button",
+      "reflect": "Gives us a nice ability to style components across our project with lots of simplicity and reusability ",
+      "id": 15
+    },
+    {
+      "topic": "Proxy",
+      "content": "inside package.json you can add a proxy like \"proxy\": \"http://localhost:5000\", - so when fetching your data, you can omit that portion with use of just \"/\" ",
+      "reflect": "tricks to help with productivity while writing code",
+      "id": 16
+    },
+    {
+      "topic": "Concurrently",
+      "content": "\"dev\": \"concurrently \\\"npm run server\\\" \\\"npm start\\\"\"\nunder scripts in package.json you are able to run multiple websites from one node.  \n\nthis gives us the \"server\": \"json-server --watch db.json --port 5000\", and our home port 3000 which runs our base page on our browser and gives us full functionality of the web app",
+      "reflect": "Other tricks to improve ease of use of loading our website",
+      "id": 17
+    }
+  ]
+}
